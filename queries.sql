@@ -50,7 +50,7 @@ group by s.sales_person_id, weekday, number_wd -- группировка в за
 )
 select 
   (e.first_name || ' ' || e.last_name) as name,
-  wd.weekday as day_of_week,
+  TRIM(wd.weekday) as day_of_week,
   round(wd.income) as income /* округляет выручку до целого числа*/
 from weekday_income as wd
 join employees e
@@ -116,3 +116,4 @@ order by customer_id, sale_date
 ; 
    
    -- конез задачи 6/3  предыдущее решение имело идентичный результат
+
