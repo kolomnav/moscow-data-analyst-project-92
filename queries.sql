@@ -49,9 +49,9 @@ join products p
 group by s.sales_person_id, weekday, number_wd -- группировка в запросе 
 )
 select 
-  (e.first_name || ' ' || e.last_name) as name,
+  (e.first_name || ' ' || e.last_name) as seller,
   TRIM(wd.weekday) as day_of_week,
-  round(wd.income) as income /* округляет выручку до целого числа*/
+  FLOOR(wd.income) as income /* округляет выручку до целого числа*/
 from weekday_income as wd
 join employees e
   on wd.sale_id = e.employee_id
@@ -116,4 +116,5 @@ order by customer_id, sale_date
 ; 
    
    -- конез задачи 6/3  предыдущее решение имело идентичный результат
+
 
