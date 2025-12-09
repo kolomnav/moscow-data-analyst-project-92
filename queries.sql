@@ -70,38 +70,45 @@ LEFT JOIN products p ON s.product_id =p.product_id
 LEFT JOIN customers c ON s.customer_id = c.customer_id
 GROUP BY selling_month
 ORDER BY selling_month;
-
 -- Конец задачи 6/2
- WITH tab AS
-  (SELECT concat(c.first_name,' ',c.last_name) AS customer,
-          s.customer_id,
-							  
-          first_value (s.sale_date) OVER (PARTITION BY s.customer_id) AS sale_date, --   первое значение s.sale_date в разрезе id продавца
- first_value (p.price) OVER (PARTITION BY s.customer_id
-                             ORDER BY s.sale_date, p.price) AS first_p, -- первое значение p.price в разрезе id продавца и отсортированному по s.sale_date, p.price
-			 
-				
-								
-																						   
- 
-	   
- first_value (concat(e.first_name, ' ', e.last_name)) OVER (PARTITION BY s.customer_id
-                                                            ORDER BY s.sale_date, p.price) AS seller -- первое значение имя продавца в разрезе id продавца и отсортированному по s.sale_date, p.price
-FROM sales s
-   JOIN customers c ON s.customer_id = c.customer_id
-				
-   JOIN employees e ON e.employee_id = s.sales_person_id
-   JOIN products p ON p.product_id = s.product_id)
-SELECT customer,
-       sale_date,
-       seller
-FROM tab
-WHERE first_p = '0' --где прайс  0
-GROUP BY customer,
-	 customer_id,
-     sale_date,
-     seller
-ORDER BY customer_id,
-    sale_date
-;
-
+WITH tab AS (
+ SELECT
+  concat(c.first_name, ' ', c.last_name) AS customer,
+  s.customer_id,
+  first_value (s.sale_date) OVER (PARTITION BY s.customer_id) AS sale_date,
+  --   первое значение s.sale_date в разрезе id продавца
+  first_value (p.price) OVER (
+   PARTITION BY s.customer_id
+   ORDER BY
+    s.sale_date,
+    p.price
+  ) AS first_p,
+  -- первое значение p.price в разрезе id продавца и отсортированному по s.sale_date, p.price
+  first_value (concat(e.first_name, ' ', e.last_name)) OVER (
+   PARTITION BY s.customer_id
+   ORDER BY
+    s.sale_date,
+    p.price
+  ) AS seller -- первое значение имя продавца в разрезе id продавца и отсортированному по s.sale_date, p.price
+ FROM
+  sales s
+  JOIN customers c ON s.customer_id = c.customer_id
+  JOIN employees e ON e.employee_id = s.sales_person_id
+  JOIN products p ON p.product_id = s.product_id
+)
+SELECT
+ customer,
+ sale_date,
+ seller
+FROM
+ tab
+WHERE
+ first_p = '0' --где прайс  0
+GROUP BY
+ customer,
+ customer_id,
+ sale_date,
+ seller
+ORDER BY
+ customer_id,
+ sale_date;
