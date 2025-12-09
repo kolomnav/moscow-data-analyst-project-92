@@ -97,9 +97,12 @@ SELECT customer,
        seller
 FROM tab
 WHERE first_p = '0' --где прайс  0
-GROUP BY customer,
-         customer_id,
-         sale_date,
-         seller
-ORDER BY customer_id,
-         sale_date;
+GROUP BY 
+	customer,
+    customer_id,
+    sale_date,
+    seller
+ORDER BY 
+	customer_id,
+    sale_date;
+
