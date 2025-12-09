@@ -15,7 +15,7 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT avg(sales.quantity * products.price) as avg_total
+    SELECT AVG(sales.quantity * products.price) as avg_tot
     FROM sales
     INNER JOIN products ON sales.product_id = products.product_id
 )
@@ -30,7 +30,7 @@ GROUP BY seller
 HAVING
     avg(sales.quantity * products.price)
     < (
-        SELECT avg_total
+        SELECT avg_tot
         FROM avg_check
     )
 ORDER BY average_income;
@@ -38,7 +38,7 @@ ORDER BY average_income;
 WITH weekday_income AS (
     SELECT
         s.sales_person_id AS sale_id,
-        to_char(s.sale_date, 'day') AS weekday,
+        to_char(s.sale_date, 'day') AS 'weekday',
         extract(
             ISODOW
             FROM s.sale_date
@@ -46,7 +46,7 @@ WITH weekday_income AS (
         sum(p.price * s.quantity) AS income
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
-    GROUP BY 
+    GROUP BY
         1,
         2,
         3
@@ -62,9 +62,11 @@ SELECT
 FROM weekday_income AS wd
 INNER JOIN employees AS e ON wd.sale_id = e.employee_id
 ORDER BY
-    number_wd,
+    1,
+    2,
+    /*number_wd,
     day_of_week,
-    seller;
+    seller;*/
 
 -- конец задачи 5/3
 -- ЗАДАЧА 6
@@ -95,8 +97,8 @@ ORDER BY selling_month;
 -- Конец задачи 6/2
 WITH tab AS (
     SELECT
-        concat(c.first_name, ' ', c.last_name) AS customer,
         s.customer_id,
+        concat(c.first_name, ' ', c.last_name) AS customer,
         first_value(s.sale_date) OVER (PARTITION BY s.customer_id) AS sale_date,
         -- первое значение s.sale_date в разрезе id продавца
         first_value(p.price) OVER (
@@ -112,10 +114,10 @@ WITH tab AS (
                 p.price
         ) AS seller -- первое значение имя продавца в разрезе id продавца 
     FROM
-        sales s
-    INNER JOIN customers c ON s.customer_id = c.customer_id
-    INNER JOIN employees e ON s.sales_person_id = e.employee_id 
-    INNER JOIN products p ON s.product_id = p.product_id
+        sales as s
+    INNER JOIN customers as c ON s.customer_id = c.customer_id
+    INNER JOIN employees as e ON s.sales_person_id = e.employee_id 
+    INNER JOIN products as p ON s.product_id = p.product_id
 )
 
 SELECT
@@ -134,8 +136,3 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
-
-
-
-
-
