@@ -15,8 +15,8 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT 
-    AVG(s.quantity * p.price)
+    SELECT
+        AVG (s.quantity * p.price)
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
 )
@@ -70,7 +70,7 @@ SELECT
         WHEN
             age >= 16
             AND age < 26 THEN '16-25'
-    END AS age_category,
+    END AS age_category
     --COUNT(age) AS age_count
 FROM customers
 GROUP BY age_category
