@@ -97,18 +97,19 @@ WITH tab AS (
   JOIN products p ON p.product_id = s.product_id
 )
 SELECT
- customer,
- sale_date,
- seller
+    customer,
+    sale_date,
+    seller
 FROM
- tab
+    tab
 WHERE
- first_p = '0' --где прайс  0
+    first_p = '0' --где прайс  0
 GROUP BY
- customer,
- customer_id,
- sale_date,
- seller
+    customer,
+    customer_id,
+    sale_date,
+    seller
 ORDER BY
- customer_id,
- sale_date;
+    customer_id,
+    sale_date;
+
