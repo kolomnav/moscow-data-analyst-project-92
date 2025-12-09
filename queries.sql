@@ -50,24 +50,28 @@ ORDER BY number_wd,
          name;
 -- конец задачи 5/3
 -- ЗАДАЧА 6
-SELECT CASE
-           WHEN age > 40 THEN '40+'
-           WHEN age >=26
-                AND age <=40 THEN '26-40'
-           WHEN age >=16
-                AND age <26 THEN '16-25'
-       END AS age_category,
-       count(1) AS age_count
+SELECT
+    CASE
+        WHEN age > 40 THEN '40+'
+        WHEN
+            age >= 26
+            AND age <= 40 THEN '26-40'
+        WHEN
+            age >= 16
+            AND age < 26 THEN '16-25'
+    END AS age_category,
+    count(*) AS age_count
 FROM customers
 GROUP BY age_category
 ORDER BY age_category;
 -- Конец задачи 6/1
-SELECT TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
-       count(DISTINCT(c.customer_id)) AS total_customers,
-FLOOR (SUM (s.quantity * p.price)) AS income
+SELECT
+    to_char(s.sale_date, 'YYYY-MM') AS selling_month,
+    count(DISTINCT c.customer_id) AS total_customers,
+    floor(sum(s.quantity * p.price)) AS income
 FROM sales AS s
-LEFT JOIN products p ON s.product_id =p.product_id
-LEFT JOIN customers c ON s.customer_id = c.customer_id
+LEFT JOIN products AS p ON s.product_id = p.product_id
+LEFT JOIN customers AS c ON s.customer_id = c.customer_id
 GROUP BY selling_month
 ORDER BY selling_month;
 -- Конец задачи 6/2
@@ -112,5 +116,6 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
+
 
 
