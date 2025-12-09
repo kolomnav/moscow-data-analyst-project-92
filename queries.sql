@@ -11,9 +11,7 @@ LEFT JOIN products p ON s.product_id =p.product_id
 LEFT JOIN employees e ON s.sales_person_id = e.employee_id
 GROUP BY seller
 ORDER BY income DESC
-LIMIT 10 ;
-	 
-
+LIMIT 10;
 --конец  задачи 5/1
  WITH avg_check AS
   (SELECT AVG(sales.quantity * products.price)
@@ -28,7 +26,7 @@ GROUP BY seller
 HAVING AVG(sales.quantity * products.price) <
   (SELECT *
    FROM avg_check)
-ORDER BY average_income ;
+ORDER BY average_income;
 
 -- конец второй задачи 5/2
  WITH weekday_income AS
@@ -41,8 +39,7 @@ ORDER BY average_income ;
    JOIN products p ON s.product_id = p.product_id
    GROUP BY s.sales_person_id,
             weekday,
-            number_wd -- группировка в запросе
-)
+            number_wd) -- группировка в запросе
 SELECT (e.first_name || ' ' || e.last_name) AS seller,
        TRIM(wd.weekday) AS day_of_week,
        FLOOR(wd.income) AS income /* округляет выручку до целого числа*/
@@ -50,11 +47,9 @@ FROM weekday_income AS wd
 JOIN employees e ON wd.sale_id = e.employee_id
 ORDER BY number_wd,
          day_of_week,
-         name ;
-
+         name;
 -- конец задачи 5/3
- -- ЗАДАЧА 6
-
+-- ЗАДАЧА 6
 SELECT CASE
            WHEN age > 40 THEN '40+'
            WHEN age >=26
@@ -65,17 +60,8 @@ SELECT CASE
        count(1) AS age_count
 FROM customers
 GROUP BY age_category
-ORDER BY age_category ;
-
+ORDER BY age_category;
 -- Конец задачи 6/1
-	  
-															  
-																   
-				   
-																		 
-						   
- 
-
 SELECT TO_CHAR(s.sale_date, 'YYYY-MM') AS selling_month,
        count(DISTINCT(c.customer_id)) AS total_customers,
 FLOOR (SUM (s.quantity * p.price)) AS income
@@ -83,11 +69,11 @@ FROM sales AS s
 LEFT JOIN products p ON s.product_id =p.product_id
 LEFT JOIN customers c ON s.customer_id = c.customer_id
 GROUP BY selling_month
-ORDER BY selling_month ;
+ORDER BY selling_month;
 
 -- Конец задачи 6/2
  WITH tab AS
-  (SELECT concat(c.first_name, ' ', c.last_name) AS customer,
+  (SELECT concat(c.first_name,' ',c.last_name) AS customer,
           s.customer_id,
 							  
           first_value (s.sale_date) OVER (PARTITION BY s.customer_id) AS sale_date, --   первое значение s.sale_date в разрезе id продавца
@@ -116,4 +102,4 @@ GROUP BY customer,
          sale_date,
          seller
 ORDER BY customer_id,
-         sale_date ;
+         sale_date;
