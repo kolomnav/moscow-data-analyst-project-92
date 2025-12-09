@@ -3,51 +3,66 @@ SELECT count(customer_id) AS customers_count
 FROM customers;
 -- конец 4
 -- Задача 5
-SELECT concat(e.first_name,' ',e.last_name) AS seller,
-       count(s.sales_person_id) AS operations,
-FLOOR (SUM (s.quantity * p.price)) AS income
+SELECT
+    concat(e.first_name, ' ', e.last_name) AS seller,
+    count(s.sales_person_id) AS operations,
+    floor(sum(s.quantity * p.price)) AS income
 FROM sales AS s
-LEFT JOIN products p ON s.product_id =p.product_id
-LEFT JOIN employees e ON s.sales_person_id = e.employee_id
+LEFT JOIN products AS p ON s.product_id = p.product_id
+LEFT JOIN employees AS e ON s.sales_person_id = e.employee_id
 GROUP BY seller
 ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
- WITH avg_check AS
-  (SELECT AVG(sales.quantity * products.price)
-   FROM sales
-   JOIN products ON sales.product_id = products.product_id)
-SELECT CONCAT_WS(' ', employees.first_name, employees.last_name) AS seller,
-FLOOR (AVG(sales.quantity * products.price)) AS average_income
-FROM sales
-JOIN products ON sales.product_id = products.product_id
-JOIN employees ON sales.sales_person_id = employees.employee_id
-GROUP BY seller
-HAVING AVG(sales.quantity * products.price) <
-  (SELECT *
-   FROM avg_check)
-ORDER BY average_income;
+WITH avg_check AS (
+    SELECT avg(sales.quantity * products.price)
+    FROM sales
+    INNER JOIN products ON sales.product_id = products.product_id
+)
 
+SELECT
+    concat_ws(' ', employees.first_name, employees.last_name) AS seller,
+    floor(avg(sales.quantity * products.price)) AS average_income
+FROM sales
+INNER JOIN products ON sales.product_id = products.product_id
+INNER JOIN employees ON sales.sales_person_id = employees.employee_id
+GROUP BY seller
+HAVING
+    avg(sales.quantity * products.price)
+    < (
+        SELECT *
+        FROM avg_check
+    )
+ORDER BY average_income;
 -- конец второй задачи 5/2
- WITH weekday_income AS
-  (SELECT s.sales_person_id AS sale_id,
-          to_char(s.sale_date, 'day') AS weekday,
-          extract(isodow
-                  FROM s.sale_date) AS number_wd,
-          sum(p.price * s.quantity) AS income
-   FROM sales s
-   JOIN products p ON s.product_id = p.product_id
-   GROUP BY s.sales_person_id,
-            weekday,
-            number_wd) -- группировка в запросе
-SELECT (e.first_name || ' ' || e.last_name) AS seller,
-       TRIM(wd.weekday) AS day_of_week,
-       FLOOR(wd.income) AS income /* округляет выручку до целого числа*/
+WITH weekday_income AS (
+    SELECT
+        s.sales_person_id AS sale_id,
+        to_char(s.sale_date, 'day') AS weekday,
+        extract(
+            ISODOW
+            FROM s.sale_date
+        ) AS number_wd,
+        sum(p.price * s.quantity) AS income
+    FROM sales AS s
+    INNER JOIN products AS p ON s.product_id = p.product_id
+    GROUP BY
+        s.sales_person_id,
+        weekday,
+        number_wd
+) -- группировка в запросе
+
+SELECT
+    (e.first_name || ' ' || e.last_name) AS seller,
+    trim(wd.weekday) AS day_of_week,
+    floor(wd.income) AS income /* округляет выручку до целого числа*/
 FROM weekday_income AS wd
-JOIN employees e ON wd.sale_id = e.employee_id
-ORDER BY number_wd,
-         day_of_week,
-         name;
+INNER JOIN employees AS e ON wd.sale_id = e.employee_id
+ORDER BY
+    number_wd,
+    day_of_week,
+    seller;
+
 -- конец задачи 5/3
 -- ЗАДАЧА 6
 SELECT
@@ -116,6 +131,7 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
+
 
 
 
