@@ -90,12 +90,13 @@ WITH tab AS (
     s.sale_date,
     p.price
   ) AS seller -- первое значение имя продавца в разрезе id продавца и отсортированному по s.sale_date, p.price
- FROM
-  sales s
-  JOIN customers c ON s.customer_id = c.customer_id
-  JOIN employees e ON e.employee_id = s.sales_person_id
-  JOIN products p ON p.product_id = s.product_id
+FROM
+        sales s
+    INNER JOIN customers c ON s.customer_id = c.customer_id
+    INNER JOIN employees e ON e.employee_id = s.sales_person_id
+    INNER JOIN products p ON p.product_id = s.product_id
 )
+
 SELECT
     customer,
     sale_date,
@@ -112,4 +113,3 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
-
