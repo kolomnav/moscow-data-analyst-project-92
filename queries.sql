@@ -82,19 +82,18 @@ WITH tab AS (
    ORDER BY
     s.sale_date,
     p.price
-  ) AS first_p,
-  -- первое значение p.price в разрезе id продавца и отсортированному по s.sale_date, p.price
-  first_value (concat(e.first_name, ' ', e.last_name)) OVER (
-   PARTITION BY s.customer_id
-   ORDER BY
-    s.sale_date,
-    p.price
-  ) AS seller -- первое значение имя продавца в разрезе id продавца и отсортированному по s.sale_date, p.price
-FROM
+    ) AS first_p, -- первое значение p.price в разрезе id продавца 
+    first_value (concat(e.first_name,' ', e.last_name)) OVER(
+            PARTITION BY s.customer_id
+            ORDER BY
+                s.sale_date,
+                p.price
+        ) AS seller -- первое значение имя продавца в разрезе id продавца 
+    FROM
         sales s
     INNER JOIN customers c ON s.customer_id = c.customer_id
-    INNER JOIN employees e ON e.employee_id = s.sales_person_id
-    INNER JOIN products p ON p.product_id = s.product_id
+    INNER JOIN employees e ON s.sales_person_id = e.employee_id 
+    INNER JOIN products p ON s.product_id = p.product_id
 )
 
 SELECT
@@ -113,3 +112,4 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
+
