@@ -16,7 +16,7 @@ LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
     SELECT s.quantity
-       --AVG(s.quantity * p.price) AS price_sum
+    --AVG(s.quantity * p.price) AS price_sum
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
 )
