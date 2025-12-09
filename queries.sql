@@ -15,8 +15,8 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT
-        AVG(s.quantity * p.price) AS price_sum
+    SELECT s.quantity
+       --AVG(s.quantity * p.price) AS price_sum
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
 )
@@ -127,4 +127,3 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
-
