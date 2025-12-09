@@ -15,7 +15,7 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT AVG(sales.quantity * products.price) as avg_tot
+    SELECT AVG(sales.quantity * products.price)
     FROM sales
     INNER JOIN products ON sales.product_id = products.product_id
 )
@@ -30,7 +30,7 @@ GROUP BY seller
 HAVING
     avg(sales.quantity * products.price)
     < (
-        SELECT avg_tot
+        SELECT 1
         FROM avg_check
     )
 ORDER BY average_income;
@@ -38,7 +38,7 @@ ORDER BY average_income;
 WITH weekday_income AS (
     SELECT
         s.sales_person_id AS sale_id,
-        to_char(s.sale_date, 'day') AS 'weekday',
+    to_char(s.sale_date, 'day') AS weekday,
         extract(
             ISODOW
             FROM s.sale_date
@@ -47,14 +47,8 @@ WITH weekday_income AS (
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
     GROUP BY
-        1,
-        2,
-        3
-        /*s.sales_person_id,
-        weekday,
-        number_wd */
-) -- группировка в запросе
-
+        s.sales_person_id,
+        ) -- группировка в запросе
 SELECT
     (e.first_name || ' ' || e.last_name) AS seller,
     trim(wd.weekday) AS day_of_week,
@@ -62,25 +56,20 @@ SELECT
 FROM weekday_income AS wd
 INNER JOIN employees AS e ON wd.sale_id = e.employee_id
 ORDER BY
-    1,
-    2,
-    /*number_wd,
     day_of_week,
-    seller;*/
-
--- конец задачи 5/3
--- ЗАДАЧА 6
-SELECT
-    CASE
-        WHEN age > 40 THEN '40+'
-        WHEN
-            age >= 26
-            AND age <= 40 THEN '26-40'
-        WHEN
-            age >= 16
-            AND age < 26 THEN '16-25'
-    END AS age_category,
-    count(*) AS age_count
+    seller;
+    -- конец задачи 5 -- ЗАДАЧА 6
+    SELECT
+        CASE
+            WHEN age > 40 THEN '40+'
+            WHEN
+                age >= 26
+                AND age <= 40 THEN '26-40'
+            WHEN
+                age >= 16
+                AND age < 26 THEN '16-25'
+        END AS age_category,
+    COUNT(age) AS age_count
 FROM customers
 GROUP BY age_category
 ORDER BY age_category;
@@ -114,10 +103,10 @@ WITH tab AS (
                 p.price
         ) AS seller -- первое значение имя продавца в разрезе id продавца 
     FROM
-        sales as s
-    INNER JOIN customers as c ON s.customer_id = c.customer_id
-    INNER JOIN employees as e ON s.sales_person_id = e.employee_id 
-    INNER JOIN products as p ON s.product_id = p.product_id
+        sales AS s
+    INNER JOIN customers AS c ON s.customer_id = c.customer_id
+    INNER JOIN employees AS e ON s.sales_person_id = e.employee_id 
+    INNER JOIN products AS p ON s.product_id = p.product_id
 )
 
 SELECT
@@ -136,3 +125,4 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
+
