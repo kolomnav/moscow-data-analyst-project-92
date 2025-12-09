@@ -15,7 +15,7 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT avg(sales.quantity * products.price)
+    SELECT avg(sales.quantity * products.price) as avg_total
     FROM sales
     INNER JOIN products ON sales.product_id = products.product_id
 )
@@ -30,7 +30,7 @@ GROUP BY seller
 HAVING
     avg(sales.quantity * products.price)
     < (
-        SELECT *
+        SELECT avg_total
         FROM avg_check
     )
 ORDER BY average_income;
@@ -46,10 +46,13 @@ WITH weekday_income AS (
         sum(p.price * s.quantity) AS income
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
-    GROUP BY
-        s.sales_person_id,
+    GROUP BY 
+        1,
+        2,
+        3
+        /*s.sales_person_id,
         weekday,
-        number_wd
+        number_wd */
 ) -- группировка в запросе
 
 SELECT
@@ -131,6 +134,7 @@ GROUP BY
 ORDER BY
     customer_id,
     sale_date;
+
 
 
 
