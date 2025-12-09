@@ -102,5 +102,6 @@ GROUP BY customer,
      sale_date,
      seller
 ORDER BY customer_id,
-	 sale_date
-	 ;
+    sale_date
+;
+
