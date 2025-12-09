@@ -15,7 +15,8 @@ ORDER BY income DESC
 LIMIT 10;
 --конец  задачи 5/1
 WITH avg_check AS (
-    SELECT AVG(s.quantity * p.price)
+    SELECT 
+    AVG(s.quantity * p.price)
     FROM sales AS s
     INNER JOIN products AS p ON s.product_id = p.product_id
 )
@@ -38,7 +39,7 @@ ORDER BY average_income;
 WITH weekday_income AS (
     SELECT
         s.sales_person_id AS sale_id,
-        to_char(s.sale_date, 'DD') AS weekday,
+        to_char(s.sale_date, 'DD') AS week_day,
         extract(
             ISODOW
             FROM s.sale_date
@@ -49,7 +50,7 @@ WITH weekday_income AS (
     GROUP BY
         s.sales_person_id
 ) -- группировка в запросе
-    
+
 SELECT
     (e.first_name || ' ' || e.last_name) AS seller,
     trim(wd.weekday) AS day_of_week,
@@ -66,11 +67,11 @@ SELECT
         WHEN
             age >= 26
             AND age <= 40 THEN '26-40'
-            WHEN
+        WHEN
             age >= 16
             AND age < 26 THEN '16-25'
     END AS age_category,
-    COUNT(age) AS age_count
+    --COUNT(age) AS age_count
 FROM customers
 GROUP BY age_category
 ORDER BY age_category;
@@ -106,7 +107,7 @@ WITH tab AS (
     FROM
         sales AS s
     INNER JOIN customers AS c ON s.customer_id = c.customer_id
-    INNER JOIN employees AS e ON s.sales_person_id = e.employee_id 
+    INNER JOIN employees AS e ON s.sales_person_id = e.employee_id
     INNER JOIN products AS p ON s.product_id = p.product_id
 )
 
